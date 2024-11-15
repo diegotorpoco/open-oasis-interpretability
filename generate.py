@@ -16,8 +16,8 @@ import argparse
 from pprint import pprint
 import os
 
-assert torch.cuda.is_available()
-device = "cuda:0"
+# assert torch.cuda.is_available()
+device = torch.device("mps") #"cuda:0"
 
 
 def main(args):
@@ -41,7 +41,7 @@ def main(args):
         vae_ckpt = torch.load(args.vae_ckpt, weights_only=True)
         vae.load_state_dict(vae_ckpt)
     elif args.vae_ckpt.endswith(".safetensors"):
-        load_model(vae, args.vae_ckpt)
+        load_model(vae, args.vae_ckpt)  
     vae = vae.to(device).eval()
 
     # sampling params
@@ -60,6 +60,7 @@ def main(args):
         n_prompt_frames=n_prompt_frames,
     )
     # get input action stream
+    print(f"actions path: {args.actions_path}\n")
     actions = load_actions(args.actions_path, action_offset=args.video_offset)[:, :total_frames]
 
     # sampling inputs
